@@ -56,28 +56,28 @@ build: ## Build all workspace members and trtx-rs
 	cargo build
 	@if [ -d "$(TRTX_RS_DIR)" ]; then \
 		echo "Building trtx-rs..."; \
-		cd $(TRTX_RS_DIR) && cargo build; \
+		cd $(TRTX_RS_DIR) && cargo build --features mock; \
 	fi
 
 build-release: ## Build all workspace members and trtx-rs in release mode
 	cargo build --release
 	@if [ -d "$(TRTX_RS_DIR)" ]; then \
 		echo "Building trtx-rs in release mode..."; \
-		cd $(TRTX_RS_DIR) && cargo build --release; \
+		cd $(TRTX_RS_DIR) && cargo build --release --features mock; \
 	fi
 
 test: ## Run tests for all workspace members and trtx-rs
 	cargo test
 	@if [ -d "$(TRTX_RS_DIR)" ]; then \
 		echo "Testing trtx-rs..."; \
-		cd $(TRTX_RS_DIR) && cargo test; \
+		cd $(TRTX_RS_DIR) && cargo test --features mock; \
 	fi
 
 check: ## Run cargo check on all workspace members and trtx-rs
 	cargo check --workspace
 	@if [ -d "$(TRTX_RS_DIR)" ]; then \
 		echo "Checking trtx-rs..."; \
-		cd $(TRTX_RS_DIR) && cargo check --workspace; \
+		cd $(TRTX_RS_DIR) && cargo check --workspace --features mock; \
 	fi
 
 fmt: ## Format all code in the workspace and trtx-rs
@@ -91,7 +91,7 @@ clippy: ## Run clippy on all workspace members and trtx-rs
 	cargo clippy --workspace -- -D warnings
 	@if [ -d "$(TRTX_RS_DIR)" ]; then \
 		echo "Clippy on trtx-rs..."; \
-		cd $(TRTX_RS_DIR) && cargo clippy --workspace -- -D warnings; \
+		cd $(TRTX_RS_DIR) && cargo clippy --workspace --features mock -- -D warnings; \
 	fi
 
 clean: ## Clean build artifacts
