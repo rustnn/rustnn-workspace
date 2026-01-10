@@ -52,26 +52,54 @@ clone: ## Clone all rustnn project repositories
 	fi
 	@echo "✓ All repositories cloned"
 
-build: ## Build all workspace members
+build: ## Build all workspace members and trtx-rs
 	cargo build
+	@if [ -d "$(TRTX_RS_DIR)" ]; then \
+		echo "Building trtx-rs..."; \
+		cd $(TRTX_RS_DIR) && cargo build; \
+	fi
 
-build-release: ## Build all workspace members in release mode
+build-release: ## Build all workspace members and trtx-rs in release mode
 	cargo build --release
+	@if [ -d "$(TRTX_RS_DIR)" ]; then \
+		echo "Building trtx-rs in release mode..."; \
+		cd $(TRTX_RS_DIR) && cargo build --release; \
+	fi
 
-test: ## Run tests for all workspace members
+test: ## Run tests for all workspace members and trtx-rs
 	cargo test
+	@if [ -d "$(TRTX_RS_DIR)" ]; then \
+		echo "Testing trtx-rs..."; \
+		cd $(TRTX_RS_DIR) && cargo test; \
+	fi
 
-check: ## Run cargo check on all workspace members
+check: ## Run cargo check on all workspace members and trtx-rs
 	cargo check --workspace
+	@if [ -d "$(TRTX_RS_DIR)" ]; then \
+		echo "Checking trtx-rs..."; \
+		cd $(TRTX_RS_DIR) && cargo check --workspace; \
+	fi
 
-fmt: ## Format all code in the workspace
+fmt: ## Format all code in the workspace and trtx-rs
 	cargo fmt --all
+	@if [ -d "$(TRTX_RS_DIR)" ]; then \
+		echo "Formatting trtx-rs..."; \
+		cd $(TRTX_RS_DIR) && cargo fmt --all; \
+	fi
 
-clippy: ## Run clippy on all workspace members
+clippy: ## Run clippy on all workspace members and trtx-rs
 	cargo clippy --workspace -- -D warnings
+	@if [ -d "$(TRTX_RS_DIR)" ]; then \
+		echo "Clippy on trtx-rs..."; \
+		cd $(TRTX_RS_DIR) && cargo clippy --workspace -- -D warnings; \
+	fi
 
 clean: ## Clean build artifacts
 	cargo clean
+	@if [ -d "$(TRTX_RS_DIR)" ]; then \
+		echo "Cleaning trtx-rs..."; \
+		cd $(TRTX_RS_DIR) && cargo clean; \
+	fi
 
 update: ## Update all subproject repositories
 	@echo "Updating repositories..."

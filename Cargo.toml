@@ -3,10 +3,12 @@ resolver = "2"
 
 members = [
     "rustnn",
-    "trtx-rs",
     "webnn-graph",
     "webnn-onnx-utils",
-    "search-bikeshed",
+]
+
+exclude = [
+    "trtx-rs",
 ]
 
 [workspace.package]
