@@ -26,7 +26,11 @@ graph TB
     subgraph "Input & Authoring"
         ONNX["ONNX Models"]
         DSL[".webnn DSL Files"]
-        PY["Python WebNN API"]
+        PY["Python Code"]
+    end
+
+    subgraph "Python Bindings Layer"
+        PYWN["pywebnn<br/>Python WebNN API"]
     end
 
     subgraph "Conversion & Validation Layer"
@@ -58,7 +62,8 @@ graph TB
 
     ONNX --> WG
     DSL --> WG
-    PY --> RN
+    PY --> PYWN
+    PYWN --> RN
     WG --> RN
 
     RN --> TRT
@@ -66,6 +71,7 @@ graph TB
     RN --> CML
 
     style RN fill:#4a90e2
+    style PYWN fill:#9b59b6
     style WG fill:#7b68ee
     style WOU fill:#50c878
     style TRT fill:#76b900
@@ -76,7 +82,8 @@ graph TB
 
 | Component | Purpose | Key Features |
 |-----------|---------|--------------|
-| **rustnn** | Core WebNN runtime | • W3C spec-compliant implementation<br/>• Multi-backend execution<br/>• Python bindings (PyWebNN)<br/>• 88/105 operations (84% coverage) |
+| **rustnn** | Core WebNN runtime | • W3C spec-compliant implementation<br/>• Multi-backend execution<br/>• Rust library crate<br/>• 88/105 operations (84% coverage) |
+| **pywebnn** | Python bindings | • Full W3C WebNN Python API<br/>• PyO3 bindings to rustnn<br/>• NumPy integration<br/>• PyPI package distribution |
 | **webnn-graph** | DSL & visualization | • .webnn text format parser<br/>• ONNX → WebNN conversion<br/>• Graph validation & visualization<br/>• JavaScript code generation |
 | **webnn-onnx-utils** | Shared utilities | • Type/operation mapping<br/>• Attribute parsing<br/>• Shape inference<br/>• Used by rustnn & webnn-graph |
 | **trtx-rs** | GPU acceleration | • Safe TensorRT-RTX bindings<br/>• RAII-based API<br/>• Mock mode for dev without GPU<br/>• AOT compilation + runtime inference |
@@ -279,7 +286,8 @@ cargo run --features tensorrt -- execute model.webnn input.npy
 
 This workspace includes the following projects:
 
-- **rustnn** - Core WebNN implementation with Python bindings
+- **rustnn** - Core WebNN implementation (Rust library)
+- **pywebnn** - Python bindings for rustnn (PyO3)
 - **trtx-rs** - TensorRT integration for Rust
 - **webnn-graph** - WebNN graph DSL and visualizer
 - **webnn-onnx-utils** - ONNX utilities for WebNN

@@ -1,6 +1,6 @@
 # rustnn-workspace - Multi-Project Agent Guide
 
-This workspace contains five interconnected projects for WebNN (Web Neural Network) implementation,
+This workspace contains six interconnected projects for WebNN (Web Neural Network) implementation,
 specification tooling, and GPU acceleration.
 
 ## Architecture Documentation
@@ -21,7 +21,8 @@ specification tooling, and GPU acceleration.
 
 ```
 rustnn-workspace/
-├── rustnn/              Core WebNN implementation (Rust + Python)
+├── rustnn/              Core WebNN implementation (Rust library)
+├── pywebnn/            Python bindings for rustnn (PyO3)
 ├── trtx-rs/            NVIDIA TensorRT bindings (Rust)
 ├── webnn-graph/        WebNN graph DSL and ONNX conversion
 ├── webnn-onnx-utils/   Shared ONNX/WebNN utilities
@@ -31,21 +32,40 @@ rustnn-workspace/
 ## Quick Navigation
 
 ### rustnn - Core WebNN Implementation
-**Purpose**: W3C WebNN specification implementation with Python bindings (PyWebNN)
+**Purpose**: W3C WebNN specification implementation (Rust library crate)
 
 **Key capabilities**:
 - Validates and executes WebNN graphs
 - Multi-backend support: TensorRT (NVIDIA GPU), ONNX Runtime (CPU/GPU), CoreML (macOS)
-- Python API implementing W3C WebNN spec
 - ONNX and CoreML format converters
 - 88/105 WebNN operations implemented (84% spec coverage)
+- Rust library API for embedding in applications
 
 **Documentation**:
 - **[rustnn/AGENTS.md](rustnn/AGENTS.md)** - Complete architecture and development guide
 - **[rustnn/README.md](rustnn/README.md)** - User guide and API reference
 - **[rustnn/docs/](rustnn/docs/)** - Detailed documentation
 
-**Key modules**: graph.rs, validator.rs, converters/, executors/, python/
+**Key modules**: graph.rs, validator.rs, converters/, executors/
+
+---
+
+### pywebnn - Python Bindings
+**Purpose**: Python API for rustnn implementing W3C WebNN specification
+
+**Key capabilities**:
+- Full W3C WebNN Python API (ML, MLContext, MLGraphBuilder, MLGraph, MLOperand)
+- PyO3-based bindings to rustnn core
+- NumPy array integration for inputs/outputs
+- ONNX Runtime and CoreML backend support
+- 2300+ tests passing (71% pass rate with backends enabled)
+
+**Documentation**:
+- **[pywebnn/README.md](https://github.com/rustnn/pywebnn/blob/main/README.md)** - User guide and installation
+- **[pywebnn/docs/getting-started.md](https://github.com/rustnn/pywebnn/blob/main/docs/getting-started.md)** - Quick start guide
+- **[pywebnn/docs/api-reference.md](https://github.com/rustnn/pywebnn/blob/main/docs/api-reference.md)** - Complete API documentation
+
+**Key modules**: src/python/ (PyO3 bindings), python/webnn/ (Python wrapper)
 
 ---
 
@@ -124,21 +144,22 @@ rustnn-workspace/
 
 ### Dependency Graph
 ```
-rustnn ──┬─→ webnn-onnx-utils ←── webnn-graph
-         │
-         └─→ trtx-rs (optional, for TensorRT backend)
+pywebnn ──→ rustnn ──┬─→ webnn-onnx-utils ←── webnn-graph
+                     │
+                     └─→ trtx-rs (optional, for TensorRT backend)
 
 search-bikeshed (independent tool for spec browsing)
 ```
 
 ### Data Flow
 ```
-1. Author: Write .webnn graph (webnn-graph DSL)
+1. Author: Write .webnn graph (webnn-graph DSL) or use Python API (pywebnn)
 2. Convert: ONNX → WebNN (webnn-graph)
-3. Validate: WebNN graph validation (rustnn validator)
-4. Execute: WebNN graph execution (rustnn executors)
+3. Python: Build graphs with pywebnn API → rustnn core
+4. Validate: WebNN graph validation (rustnn validator)
+5. Execute: WebNN graph execution (rustnn executors)
    - Backend options: TensorRT (trtx-rs), ONNX Runtime, CoreML
-5. Reference: Search WebNN spec (search-bikeshed)
+6. Reference: Search WebNN spec (search-bikeshed)
 ```
 
 ### Shared Code
@@ -161,14 +182,17 @@ When adding a new WebNN operation, you may need to update multiple projects:
 
 2. **rustnn**: Implement operation in core library
    - Add shape inference in `shape_inference.rs`
-   - Add Python API in `python/graph_builder.rs`
    - Add ONNX converter mapping in `converters/onnx.rs`
    - Add CoreML converter mapping in `converters/coreml_mlprogram.rs`
-   - Add WPT conformance tests in `tests/wpt_data/conformance/`
    - See: [rustnn/AGENTS.md - Adding New WebNN Operations](rustnn/AGENTS.md)
-   - Run: `cd rustnn && make test && make python-test`
+   - Run: `cd rustnn && make test`
 
-3. **webnn-graph**: Update parser/serializer if needed
+3. **pywebnn**: Add Python API binding
+   - Add method in `src/python/graph_builder.rs`
+   - Add WPT conformance tests in `tests/wpt_data/conformance/`
+   - Run: `cd pywebnn && make test`
+
+4. **webnn-graph**: Update parser/serializer if needed
    - Usually no changes needed (generic operation handling)
    - Update if operation has special syntax requirements
    - Run: `cd webnn-graph && cargo test`
