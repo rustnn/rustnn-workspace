@@ -19,6 +19,12 @@ repository = "https://github.com/rustnn"
 [workspace.dependencies]
 # Common dependencies can be defined here and inherited by member crates
 
+[patch."https://github.com/rustnn/webnn-graph"]
+webnn-graph = { path = "webnn-graph" }
+
+[patch."https://github.com/rustnn/webnn-onnx-utils"]
+webnn-onnx-utils = { path = "webnn-onnx-utils" }
+
 [profile.release]
 opt-level = 3
 lto = true

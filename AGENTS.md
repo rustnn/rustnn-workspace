@@ -3,6 +3,20 @@
 This workspace contains five interconnected projects for WebNN (Web Neural Network) implementation,
 specification tooling, and GPU acceleration.
 
+## Architecture Documentation
+
+**📐 [Complete Architecture Overview](README.md#architecture-overview)** - Comprehensive diagrams and explanations:
+- **System Architecture** - How all components fit together
+- **Data Flow** - From ONNX/WebNN input through validation to multi-backend execution
+- **Internal Architecture** - Deep dive into rustnn's layered design
+- **Backend Selection** - W3C-compliant device selection strategy
+- **Shared Utilities** - webnn-onnx-utils as single source of truth
+- **Development Workflow** - End-to-end example with code
+
+**Start here** to understand the complete system before diving into individual projects.
+
+---
+
 ## Project Overview
 
 ```
